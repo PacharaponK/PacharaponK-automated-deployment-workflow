@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get install -y cppcheck
 
       - name: Run Linter (cppcheck)
-        run: cppcheck --enable=all --inconclusive --quiet . # รัน cppcheck เพื่อตรวจสอบโค้ด
+        run: cppcheck --enable=all --inconclusive --quiet . # Run cppcheck to check the code
 
   deploy:
     name: Deploy to Production
@@ -52,11 +52,11 @@ jobs:
     needs: [build, lint]  # Ensure deployment happens after successful build and lint
 
     steps:
-      - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Deploy to Server
-      run: |
-      echo "Starting deployment process..."
-      echo "Deployment complete!"
-
+        run: |
+          echo "Starting deployment process..."
+          # Insert your deployment commands here
+          echo "Deployment complete!"
