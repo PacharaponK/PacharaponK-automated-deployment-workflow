@@ -1,38 +1,26 @@
-name: C++ Automated Deployment
+name: C++ Build and Test
 
 on:
   push:
     branches:
-      - main  # ระบุ branch ที่ต้องการ trigger
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest  # ใช้ Ubuntu runner
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Setup C++ build environment
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ # Install compiler
+      - name: Debug: List all files
+        run: ls -R
 
-      # Step 3: Build the program
       - name: Build C++ application
-        run: |
-          g++ -o app main.cpp
+        run: g++ -o app main.cpp
 
-      # Step 4: Test the application (Optional)
       - name: Run application test
-        run: ./app < input.txt > output.txt # Replace with your test command
-
-      # Step 5: Deploy (Example: Copy to server or upload to S3)
-      - name: Deploy application
-        run: |
-          scp app user@your-server:/path/to/deploy # ใช้ scp สำหรับ server
+        run: ./app < input.txt > output.txt
