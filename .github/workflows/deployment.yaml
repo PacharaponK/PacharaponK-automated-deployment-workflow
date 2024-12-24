@@ -27,7 +27,7 @@ jobs:
         run: g++ -std=c++17 -o main main.cpp
 
       - name: List files after compiling
-        run: ls -l
+        run: ls -l  # เพิ่มการตรวจสอบว่าไฟล์ "main" ถูกสร้างขึ้นหรือไม่
 
   # Deployment
   deploy:
@@ -39,7 +39,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: List files before deployment
+        run: ls -l  # เพิ่มการตรวจสอบว่ามีไฟล์ "main" ในตำแหน่งนี้
+
       - name: Deploy Application
         run: |
           echo "Deploying application..."
-          scp main user@your-server:/path/to/deploy
+          scp ./main user@your-server:/path/to/deploy  # ใช้ ./main เพื่อตรวจสอบว่าไฟล์อยู่ใน directory ที่ถูกต้อง
