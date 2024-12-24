@@ -21,6 +21,12 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential g++
 
+    - name: Check if main.cpp exists
+      run: |
+        if [ ! -f main.cpp ]; then
+          echo "Error: main.cpp not found" && exit 1
+        fi
+
     - name: Compile C++ code
       run: |
         g++ -std=c++17 -o program main.cpp
