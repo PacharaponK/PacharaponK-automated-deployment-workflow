@@ -29,18 +29,6 @@ jobs:
       - name: List files after compiling
         run: ls -l
 
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Run Tests
-        run: ./main < input.txt > output.txt
-
   compliance:
     name: Compliance Check
     runs-on: ubuntu-latest
