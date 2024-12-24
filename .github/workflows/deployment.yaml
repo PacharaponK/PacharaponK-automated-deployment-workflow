@@ -29,22 +29,11 @@ jobs:
       - name: List files after compiling
         run: ls -l
 
-  # test:
-  #   name: Run Tests
-  #   runs-on: ubuntu-latest
-  #   needs: build
-
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Run Tests
-  #       run: ./main < input.txt
-
+  # Compliance Check
   compliance:
     name: Compliance Check
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
 
     steps:
       - name: Checkout Code
@@ -56,10 +45,36 @@ jobs:
       - name: Lint Check
         run: cpplint *.cpp
 
+  # New Step - Run Program
+  run_program:
+    name: Run Program and Verify Output
+    runs-on: ubuntu-latest
+    needs: compliance
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: List files before running program
+        run: ls -l
+
+      - name: Run Program
+        run: ./main < input.txt > output.txt
+
+      - name: Verify Output
+        run: |
+          if diff output.txt expected_output.txt; then
+            echo "Output matches expected output."
+          else
+            echo "Output does not match expected output."
+            exit 1
+          fi
+
+  # Deployment
   deploy:
     name: Deployment
     runs-on: ubuntu-latest
-    needs: compliance
+    needs: run_program
 
     steps:
       - name: Checkout Code
