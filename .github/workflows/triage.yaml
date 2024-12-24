@@ -1,0 +1,19 @@
+name: Issue and PR Triage
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Automatically label issues and PRs
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: |
+            needs-triage
+          github_token: ${{ secrets.GITHUB_TOKEN }}
