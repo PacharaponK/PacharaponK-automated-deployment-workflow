@@ -1,4 +1,4 @@
-name: C++ Build and Test
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,46 +9,57 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build:
+    name: Build and Compile
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup C++ environment
-      run: |
-        sudo apt update
-        sudo apt install -y build-essential g++
+      - name: Set up C++ Environment
+        run: sudo apt-get install -y g++
 
-    - name: Check if main.cpp exists
-      run: |
-        if [ ! -f main.cpp ]; then
-          echo "Error: main.cpp not found" && exit 1
-        fi
+      - name: Compile Code
+        run: g++ -std=c++17 -o main main.cpp
 
-    - name: Compile C++ code
-      run: |
-        g++ -std=c++17 -o program main.cpp
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: build
 
-    - name: Run program
-      run: |
-        echo "5" | ./program
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Lint code with clang-format
-      run: |
-        sudo apt install -y clang-format
-        clang-format -i main.cpp
-        git diff --exit-code || (echo "Code style issues detected. Please fix them." && exit 1)
+      - name: Run Tests
+        run: ./main < input.txt > output.txt
 
-    - name: Run static analysis with cppcheck
-      run: |
-        sudo apt install -y cppcheck
-        cppcheck --enable=all --error-exitcode=1 main.cpp
+  compliance:
+    name: Compliance Check
+    runs-on: ubuntu-latest
+    needs: test
 
-    - name: Test output (example test)
-      run: |
-        echo "5" | ./program > output.txt
-        if ! grep -q "Hello World!" output.txt; then
-          echo "Test failed: 'Hello World!' not found in output." && exit 1
-        fi
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Code Formatting Check
+        run: clang-format -i *.cpp && git diff --exit-code
+
+      - name: Lint Check
+        run: cpplint *.cpp
+
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+    needs: compliance
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          scp main user@your-server:/path/to/deploy
